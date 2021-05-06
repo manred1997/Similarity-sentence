@@ -20,6 +20,8 @@
 
 #### Evaluate:
 `python evaluate.py`
+
+model [pretrained](https://drive.google.com/drive/u/2/folders/1-Bqhk814nCpYTifg66SKFNK1m6yCs_1T)
 ## Reference
 The code is referred from the following link:
 
