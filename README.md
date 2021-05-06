@@ -2,21 +2,24 @@
 
 - The training platform is Colab.
 
-- The total number of data = 10000
+- The total number of data = 323366
 
-- The number distribution of Train: test = 8:2 with dropout and Epoch: 9
+- The number distribution of Train:Dev = 8:2 with dropout and Epoch: 30
 
 
 ## Result 
 
-- Average eval_accuracy by three times experiments: 0.80433333333
+- Average eval_accuracy by three times experiments: 0.78
 
-- Range of change: (-0.01033333333, +0.00616666667)
+![alt text](./image/history-graph_new.png)
 
 
 ## Usage:
+#### Training:
 `python train.py --plot_training`
 
+#### Evaluate:
+`python evaluate.py`
 ## Reference
 The code is referred from the following link:
 
