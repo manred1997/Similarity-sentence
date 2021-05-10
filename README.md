@@ -58,3 +58,16 @@ def shared_model(_input):
 
     return sent_representation
 ```
+#### Download Word2Vec 
+[link](https://drive.google.com/file/d/1pIbATVFsp6R_kj6TjtOPhEvEqZ-OZbm3/view?usp=sharing)
+
+
+#### Model pytorch
+```
+dataset.py
+model/model_pytorch.py
+#TODO train.py
+```
+
+### Data
+[link](https://drive.google.com/drive/folders/1qh1E1UwN_jDM2G52fB2YCJrSyZ2_HDXE?usp=sharing)
