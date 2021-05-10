@@ -3,11 +3,10 @@ import torch.nn as nn
 from torch.autograd import Variable
 from config import config
 
+from utils import load_file_npy
+
 import numpy as np
 
-def load_file(path_file):
-    with open(path_file, "rb") as f:
-        return np.load(f)
 
 class BiLSTMEncoder(nn.Module):
     def __init__(self, config):
@@ -36,9 +35,6 @@ class BiLSTMEncoder(nn.Module):
     def forward(self, input_embeddings):
 
         input_embeddings = input_embeddings.permute(1,0,2)
-        # print(input_embeddings)
-        # print(input_embeddings.shape)
-        # print(input_embeddings.type())
         output, (_, _) = self.lstm(input_embeddings)
         return output
     
@@ -56,18 +52,16 @@ class WordAttention(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, lstmencoder):
-        # print("=================")
-        # print(lstmencoder.shape)
+
         lstmencoder = lstmencoder.permute(1,0,2)
         attention = torch.tanh(self.W(lstmencoder)) # Batch, Length, 1
-        # attention = attention.permute(1,0,2)
+
 
         attention = torch.flatten(attention, start_dim=1) # Batch, Length
         attention = self.softmax(attention) # Batch, Length
-        # print("************************")
-        # print(attention.shape)
+
         attention = attention.unsqueeze(2).repeat(1, 1, self.hidden_size)
-        # print(attention.shape)
+
         sent_representation = torch.mul(lstmencoder, attention)
         sent_representation = torch.sum(sent_representation, dim=1)
 
@@ -80,7 +74,7 @@ class SiameseLSTM(nn.Module):
 
         self.hidden_size = config['model']['hidden_size']
 
-        self.embedding = nn.Embedding.from_pretrained(torch.tensor(load_file(config["model"]["embeddings"])), freeze=True)
+        self.embedding = nn.Embedding.from_pretrained(torch.tensor(load_file_npy(config["model"]["embeddings"])), freeze=True)
 
         self.encoder = BiLSTMEncoder(config)
         self.attention = WordAttention(config)
@@ -97,22 +91,17 @@ class SiameseLSTM(nn.Module):
         embedding_1 = self.embedding(sentence_1)
         embedding_2 = self.embedding(sentence_2)
 
-        # init hidden, cell
-        # h0_1, c0_1 = self.encoder.initHiddenCell()
-        # h0_2, c0_2 = self.encoder.initHiddenCell()
 
         output1= self.encoder(embedding_1)
         output2= self.encoder(embedding_2)
         
         left_sen_representation = self.attention(output1)
         right_sen_representation = self.attention(output2)
-        # print(left_sen_representation.shape) # 32 100
 
-        # man_distance = torch.cdist(left_sen_representation, right_sen_representation)
         man_distance = torch.abs(left_sen_representation - right_sen_representation)
-        # print(man_distance.shape)
+
         sen_representation = torch.cat((left_sen_representation, right_sen_representation, man_distance), 1)
-        # print(sen_representation.shape)
+
         similarity = self.sigmoid(self.linear_4(self.linear_3(self.linear_2(self.linear_1(sen_representation)))))
 
         return similarity
