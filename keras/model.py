@@ -1,7 +1,7 @@
 import keras
 from gensim.models import KeyedVectors
 from keras.models import Model
-from keras.layers import Input, Embedding, LSTM, Dense, Flatten, Activation, RepeatVector, Permute, Lambda, \
+from keras.layers import Input, Embedding, LSTM, Dense, Flatten, Activation, RepeatVector, Permute, \
     Bidirectional, TimeDistributed, Dropout, Conv1D, GlobalMaxPool1D
 from keras.layers.merge import multiply, concatenate
 import keras.backend as K
