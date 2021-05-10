@@ -24,51 +24,48 @@ import itertools
 
 # ------------------自定义函数------------------ #
 
-def text_to_word_list(flag, text):  # 文本分词
+def text_to_word_list(text):  # 文本分词
     text = str(text)
     text = text.lower()
 
-    if flag == 'cn':
-        pass
-    else:
-        # 英文文本下的文本清理规则
-        import re
-        text = re.sub(r"[^A-Za-z0-9^,!.\/'+-=]", " ", text)
-        text = re.sub(r"what's", "what is ", text)
-        text = re.sub(r"\'s", " ", text)
-        text = re.sub(r"\'ve", " have ", text)
-        text = re.sub(r"can't", "cannot ", text)
-        text = re.sub(r"n't", " not ", text)
-        text = re.sub(r"i'm", "i am ", text)
-        text = re.sub(r"\'re", " are ", text)
-        text = re.sub(r"\'d", " would ", text)
-        text = re.sub(r"\'ll", " will ", text)
-        text = re.sub(r",", " ", text)
-        text = re.sub(r"\.", " ", text)
-        text = re.sub(r"!", " ! ", text)
-        text = re.sub(r"\/", " ", text)
-        text = re.sub(r"\^", " ^ ", text)
-        text = re.sub(r"\+", " + ", text)
-        text = re.sub(r"\-", " - ", text)
-        text = re.sub(r"\=", " = ", text)
-        text = re.sub(r"'", " ", text)
-        text = re.sub(r"(\d+)(k)", r"\g<1>000", text)
-        text = re.sub(r":", " : ", text)
-        text = re.sub(r" e g ", " eg ", text)
-        text = re.sub(r" b g ", " bg ", text)
-        text = re.sub(r" u s ", " american ", text)
-        text = re.sub(r"\0s", "0", text)
-        text = re.sub(r" 9 11 ", "911", text)
-        text = re.sub(r"e - mail", "email", text)
-        text = re.sub(r"j k", "jk", text)
-        text = re.sub(r"\s{2,}", " ", text)
+    # 英文文本下的文本清理规则
+    import re
+    text = re.sub(r"[^A-Za-z0-9^,!.\/'+-=]", " ", text)
+    text = re.sub(r"what's", "what is ", text)
+    text = re.sub(r"\'s", " ", text)
+    text = re.sub(r"\'ve", " have ", text)
+    text = re.sub(r"can't", "cannot ", text)
+    text = re.sub(r"n't", " not ", text)
+    text = re.sub(r"i'm", "i am ", text)
+    text = re.sub(r"\'re", " are ", text)
+    text = re.sub(r"\'d", " would ", text)
+    text = re.sub(r"\'ll", " will ", text)
+    text = re.sub(r",", " ", text)
+    text = re.sub(r"\.", " ", text)
+    text = re.sub(r"!", " ! ", text)
+    text = re.sub(r"\/", " ", text)
+    text = re.sub(r"\^", " ^ ", text)
+    text = re.sub(r"\+", " + ", text)
+    text = re.sub(r"\-", " - ", text)
+    text = re.sub(r"\=", " = ", text)
+    text = re.sub(r"'", " ", text)
+    text = re.sub(r"(\d+)(k)", r"\g<1>000", text)
+    text = re.sub(r":", " : ", text)
+    text = re.sub(r" e g ", " eg ", text)
+    text = re.sub(r" b g ", " bg ", text)
+    text = re.sub(r" u s ", " american ", text)
+    text = re.sub(r"\0s", "0", text)
+    text = re.sub(r" 9 11 ", "911", text)
+    text = re.sub(r"e - mail", "email", text)
+    text = re.sub(r"j k", "jk", text)
+    text = re.sub(r"\s{2,}", " ", text)
 
     text = text.split()
 
     return text
 
 
-def make_w2v_embeddings(flag, word2vec, df, embedding_dim):  # 将词转化为词向量
+def make_w2v_embeddings(word2vec, df, embedding_dim):  # 将词转化为词向量
     vocabs = {}  # 词序号
     vocabs_cnt = 0  # 词个数计数器
 
@@ -85,7 +82,7 @@ def make_w2v_embeddings(flag, word2vec, df, embedding_dim):  # 将词转化为�
 
         for question in ['question1', 'question2']:
             q2n = []  # q2n -> question to numbers representation
-            words = text_to_word_list(flag, row[question])
+            words = text_to_word_list(row[question])
 
             for word in words:
                 # if word in stops:  # 去停用词
@@ -113,9 +110,9 @@ def make_w2v_embeddings(flag, word2vec, df, embedding_dim):  # 将词转化为�
         vocab_word = vocabs[index]
         if vocab_word in word2vec:
             embeddings[index] = word2vec[vocab_word]
-    del word2vec
+    # del word2vec
 
-    return df, embeddings
+    return df, embeddings, vocabs
 
 
 def split_and_zero_padding(df, max_seq_length):  # 调整tokens长度

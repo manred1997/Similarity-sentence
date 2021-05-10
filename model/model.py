@@ -16,7 +16,8 @@ def shared_model(_input, embeddings, embedding_dim, max_seq_length, n_hidden):
     activations = Dropout(0.5)(activations)
 
     # Attention
-    attention = TimeDistributed(Dense(1, activation='tanh'))(activations)
+    # attention = TimeDistributed(Dense(1, activation='tanh'))(activations)
+    attention = Dense(1, activation='tanh')(activations)
     attention = Flatten()(attention)
     attention = Activation('softmax')(attention)
     attention = RepeatVector(n_hidden * 2)(attention)
