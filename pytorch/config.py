@@ -11,7 +11,8 @@ config = {
         "num_layers": 1,
         "bidirectional": True,
         "dropout": 0.2,
-        "embeddings": "embeddings.npy"
+        "embeddings": "embeddings.npy",
+        "epoch": 10,
     },
     "X_left": "sen_1.npy",
     "X_right": "sen_2.npy",

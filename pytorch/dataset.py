@@ -3,6 +3,8 @@ from torch.utils.data import Dataset
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import numpy as np
+import json
 
 from utils import load_data, load_word2vec, make_w2v_embeddings, split_and_zero_padding
 
@@ -15,7 +17,13 @@ class SiameseLSTMDataset(Dataset):
         self.df = load_data(path_file=config["source"]["data"])
 
         self.df, self.embeddings, self.vocabs = make_w2v_embeddings(self.embedding_dict, self.df, config["model"]["embedded_size"])
-
+        
+        with open("embeddings.npy", "wb") as f:
+            np.save(f, self.embeddings)
+        
+        with open("vocab.json", "w") as f:
+            json.dump(self.vocabs, f)
+        
         del self.embedding_dict
 
         self.X = self.df[["question1_n", "question2_n"]]
