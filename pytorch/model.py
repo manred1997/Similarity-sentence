@@ -102,6 +102,6 @@ class SiameseLSTM(nn.Module):
 
         sen_representation = torch.cat((left_sen_representation, right_sen_representation, man_distance), 1)
 
-        similarity = self.sigmoid(self.linear_4(self.linear_3(self.linear_2(self.linear_1(sen_representation)))))
+        similarity = self.sigmoid(self.linear_4(self.linear_3(self.linear_2(self.linear_1(sen_representation))))).view(-1)
 
         return similarity
