@@ -14,24 +14,8 @@ from config import config
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--test_data", default="../../data_quora/quora_test_new.csv", type=str, help="Path of test data")
-    # parser.add_argument("--embedding_path", default="./GoogleNews-vectors-negative300.bin.gz", type=str, help="Path of word to vector")
     parser.add_argument("--model_path", default="./en_SiameseLSTM_no_time.h5", type=str, help="Model path")
     args = parser.parse_args()
-
-    # embedding_dict = load_word2vec(path_file=args.embedding_path)
-
-    # test_df = load_data(args.test_data)
-
-    # test_df, embeddings = make_w2v_embeddings(FLAG, embedding_dict, test_df, embedding_dim=EMBEDDING_DIM)
-
-    # X_test = split_and_zero_padding(test_df, MAX_SEQ_LENGTH)
-    # Y_test = test_df['is_duplicate'].values
-
-    # assert X_test['left'].shape == X_test['right'].shape
-    # assert len(X_test['left']) == len(Y_test)
-
-    #load data
 
     X_test_left = load_file_npy(config["source"]["test"]["sentence_1"])
     X_test_right = load_file_npy(config["source"]["test"]["sentence_2"])
