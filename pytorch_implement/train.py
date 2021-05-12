@@ -71,7 +71,7 @@ def main(config):
     train_sampler = RandomSampler(train_dataset)
     train_loader = DataLoader(train_dataset, batch_size=config["model"]["batch_size"], sampler=train_sampler)
 
-    dev_dataset = SiameseLSTMDataset(config, "test")
+    dev_dataset = SiameseLSTMDataset(config, "dev")
     print(len(dev_dataset))
     dev_sampler = SequentialSampler(dev_dataset)
     dev_loader = DataLoader(dev_dataset, batch_size=config["model"]["batch_size"], sampler=dev_sampler)
@@ -98,7 +98,7 @@ def main(config):
     for epoch in range(1, config["model"]["epoch"]):
         print(f"Training epoch {str(epoch)}")
 
-        # loss_train = train(train_loader, model, optimizer, loss_fn, loss_train, epoch, device)
+        loss_train = train(train_loader, model, optimizer, loss_fn, loss_train, epoch, device)
         
         print(f"Evaluate model.............")
 
