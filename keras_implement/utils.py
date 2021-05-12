@@ -162,5 +162,9 @@ def load_data(path_file):
 def load_model(file_path):
     model = keras.models.load_model(file_path, custom_objects={"ManDist": ManDist})
     model.summary()
-
     return model
+
+def load_file_npy(file_path):
+    import numpy as np
+    with open(file_path, "rb") as f:
+        return np.load(f)

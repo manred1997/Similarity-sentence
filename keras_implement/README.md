@@ -9,7 +9,7 @@
 
 ## Result 
 
-- Average eval_accuracy by three times experiments: 0.78
+- Average eval_accuracy: 0.78
 
 ![alt text](./image/history-graph_new.png)
 
