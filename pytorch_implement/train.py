@@ -9,6 +9,7 @@ from config import config
 from dataset import SiameseLSTMDataset
 from model import SiameseLSTM
 
+from utils import load_file_npy
 # from sklearn.metrics import accuracy_score
 
 
