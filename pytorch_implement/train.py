@@ -28,19 +28,20 @@ def train(data_loader, model, optimizer, loss_fn, loss_previous, epoch, device):
         loss_train = loss_fn(output.double(), label.double())
         if loss_train <  loss:
             loss = loss_train
-            print(f"Loss train: {loss:.4f} at epoch {epoch}")
+            
             torch.save(model.state_dict(), f"./best_model_train/model.pth")
-
+        if step%20 == 0:
+            print(f"Loss train: {loss_train:.4f} at epoch {epoch}")
         loss_train.backward()
         optimizer.step()
     return loss
 
-def evaluate(data_loader, model, loss_fn, acc_previous, loss_previous, epoch, len_dataset, device):
+def evaluate(data_loader, model, loss_fn, epoch, len_dataset, device):
 
     model.eval()
 
-    loss_dev = loss_previous
-    acc_dev = 0
+    total_loss = 0
+    correct = 0    
 
     for batch in data_loader:
         batch = tuple(t.to(device) for t in batch)
@@ -51,35 +52,28 @@ def evaluate(data_loader, model, loss_fn, acc_previous, loss_previous, epoch, le
 
             loss = loss_fn(outputs.double(), label.double())
 
-            if loss < loss_dev:
-                loss_dev = loss
-            for output in outputs:
-                if output > 0.5:
-                    acc_dev += 1
 
-    acc_dev = acc_dev/len_dataset
-    print(f"Accuracy score: {acc_dev:.4f} at epoch {epoch}")
-    print(f"Loss: {loss_dev:.4f} at epoch {epoch}")
+            total_loss += loss
+            correct += ((outputs > 0.5).float() == label).float().sum()
 
-    if acc_dev > acc_previous:
-        torch.save(model.state_dict(), f"./best_model_eval/model_acc_{round(acc_dev, 4)}.pth")
-    if loss_dev < loss_previous:
-        torch.save(model.state_dict(), f"./best_model_eval/model_loss_{round(int(loss_dev), 4)}.pth")
-    return acc_dev, loss_dev
+    acc_dev = 100*int(correct)/len_dataset
+    total_loss = float(total_loss)/len_dataset
+    
+    return acc_dev, total_loss
 
 def main(config):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_dataset = SiameseLSTMDataset(config)
+    train_dataset = SiameseLSTMDataset(config, "train")
     print(len(train_dataset))
     train_sampler = RandomSampler(train_dataset)
     train_loader = DataLoader(train_dataset, batch_size=config["model"]["batch_size"], sampler=train_sampler)
 
-    dev_dataset = SiameseLSTMDataset(config)
+    dev_dataset = SiameseLSTMDataset(config, "test")
     print(len(dev_dataset))
     dev_sampler = SequentialSampler(dev_dataset)
-    dev_loader = DataLoader(dev_dataset)
+    dev_loader = DataLoader(dev_dataset, batch_size=config["model"]["batch_size"], sampler=dev_sampler)
 
     model = SiameseLSTM(config).double().to(device=device)
 
@@ -96,18 +90,32 @@ def main(config):
     optimizer = torch.optim.Adam(lr=1e-5, betas=(0.9, 0.98), eps=1e-9, params=optimizer_grouped_parameters)
     loss_fn = nn.BCELoss()
     
-    acc_dev = 0
-    loss_dev = 1000
+    acc_dev_previous = 0
+    loss_dev_previous = 1000
     loss_train = 1000
 
     for epoch in range(1, config["model"]["epoch"]):
         print(f"Training epoch {str(epoch)}")
 
-        loss_train = train(train_loader, model, optimizer, loss_fn, loss_train, epoch, device)
+        # loss_train = train(train_loader, model, optimizer, loss_fn, loss_train, epoch, device)
         
         print(f"Evaluate model.............")
 
-        acc_dev, loss_dev = evaluate(dev_loader, model, loss_fn, acc_dev, loss_dev, epoch, len(dev_dataset), device)
+        
+        acc_dev, loss_dev = evaluate(dev_loader, model, loss_fn, epoch, len(dev_dataset), device)
+        
+        print(f"Accuracy score: {acc_dev:.4f} at epoch {epoch}")
+        print(f"Loss Dev: {loss_dev:.4f} at epoch {epoch}")
+        print("="*15, f"END EPOCH {epoch}", "="*15)
+
+        if acc_dev > acc_dev_previous:
+            acc_dev_previous = acc_dev
+            torch.save(model.state_dict(), f"./best_model_eval/model_acc_{round(acc_dev, 4)}.pth")
+        if loss_dev < loss_dev_previous:
+            loss_dev_previous = loss_dev
+            torch.save(model.state_dict(), f"./best_model_eval/model_loss_{round(int(loss_dev), 4)}.pth")
+
+        
 
 if __name__ == "__main__":
     main(config)
