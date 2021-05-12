@@ -15,48 +15,18 @@ from keras.layers import Input, Embedding, LSTM, Dense, Flatten, Activation, Rep
 from keras.layers.merge import multiply, concatenate
 import keras.backend as K
 
-from model.model import shared_model, shared_model_cnn
+from model.model import shared_model
 
-from utils import make_w2v_embeddings, split_and_zero_padding, ManDist, load_data, load_word2vec
+from utils import ManDist, load_file_npy
 from config import config
 
-
-# def preprocessing_data(data, embedding_dict, flag, embedding_dim, max_seq_length=MAX_SEQ_LENGTH, split_ratio=SPLIT_RATIO):
-#     train_df, embeddings = make_w2v_embeddings(flag, embedding_dict, data, embedding_dim=embedding_dim)
-#     X = train_df[['question1_n', 'question2_n']]
-#     Y = train_df['is_duplicate']
-
-#     X_train, X_validation, Y_train, Y_validation = train_test_split(X, Y, test_size=split_ratio)
-#     X_train = split_and_zero_padding(X_train, max_seq_length)
-#     X_validation = split_and_zero_padding(X_validation, max_seq_length)
-
-#     Y_train = Y_train.values
-#     Y_validation = Y_validation.values
-
-#     assert X_train['left'].shape == X_train['right'].shape
-#     assert len(X_train['left']) == len(Y_train)
-
-#     return X_train, Y_train, X_validation, Y_validation, embeddings
-
-def load_file_npy(file_path):
-    import numpy as np
-    with open(file_path, "rb") as f:
-        return np.load(f)
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--train_data", default="../../data_quora/quora_train_10000.csv", type=str, help="Path of training and dev data")
-    parser.add_argument("--embedding_path", default="./GoogleNews-vectors-negative300.bin.gz", type=str, help="Path of word to vector")
     parser.add_argument("--save_model", default="./en_SiameseLSTM_no_time.h5", type=str, help="Save model")
     parser.add_argument("--plot_training", action="store_true", help="Plot history training")
     args = parser.parse_args()
-
-    # embedding_dict = load_word2vec(path_file=args.embedding_path)
-
-    # train_df = load_data(path_file=args.train_data)
-
-    # X_train, Y_train, X_validation, Y_validation, embeddings = preprocessing_data(data=train_df, embedding_dict=embedding_dict, flag=FLAG, embedding_dim=EMBEDDING_DIM)
 
     X_train_left = load_file_npy(config["source"]["train"]["sentence_1"])
     X_train_right = load_file_npy(config["source"]["train"]["sentence_2"])
