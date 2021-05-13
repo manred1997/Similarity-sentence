@@ -7,9 +7,8 @@ from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 
 from config import config
 from dataset import SiameseLSTMDataset
-from model import SiameseLSTM
+from model_attention import SiameseLSTM
 
-from utils import load_file_npy
 # from sklearn.metrics import accuracy_score
 
 
@@ -31,8 +30,8 @@ def train(data_loader, model, optimizer, loss_fn, loss_previous, epoch, device):
             loss = loss_train
             
             torch.save(model.state_dict(), f"./best_model_train/model.pth")
-        if step%20 == 0:
-            print(f"Loss train: {loss_train:.4f} at epoch {epoch}")
+        if step%1 == 0:
+            print(f"Loss train: {loss_train/len(label):.4f} at epoch {epoch}")
         loss_train.backward()
         optimizer.step()
     return loss
@@ -71,12 +70,15 @@ def main(config):
     train_sampler = RandomSampler(train_dataset)
     train_loader = DataLoader(train_dataset, batch_size=config["model"]["batch_size"], sampler=train_sampler)
 
-    dev_dataset = SiameseLSTMDataset(config, "dev")
+    dev_dataset = SiameseLSTMDataset(config, "test")
     print(len(dev_dataset))
     dev_sampler = SequentialSampler(dev_dataset)
     dev_loader = DataLoader(dev_dataset, batch_size=config["model"]["batch_size"], sampler=dev_sampler)
 
     model = SiameseLSTM(config).double().to(device=device)
+
+    # if True:
+    #     model.load_state_dict(torch.load("./best_model_eval/model_acc_83.3276.pth"))
 
     # optimizer = torch.optim.Adam(lr=1e-5, betas=(0.9, 0.98), eps=1e-9)
     param_optimizer = list(model.named_parameters())
@@ -88,7 +90,7 @@ def main(config):
         'weight_decay_rate': 0.0}
     ]
 
-    optimizer = torch.optim.Adam(lr=1e-5, betas=(0.9, 0.98), eps=1e-9, params=optimizer_grouped_parameters)
+    optimizer = torch.optim.Adam(lr=1e-2, betas=(0.9, 0.98), eps=1e-9, params=optimizer_grouped_parameters)
     loss_fn = nn.BCELoss()
     
     acc_dev_previous = 0

@@ -2,19 +2,19 @@ config = {
     "source": {
         "word2vec": "../GoogleNews-vectors-negative300.bin.gz",
         "train": {
-          "sentence_1": "../data/train/sentence_1.npy",
-          "sentence_2": "../data/train/sentence_2.npy",
-          "label": "../data/train/label.npy"
+          "sentence_1": "../../../data_quora/data_mini/numpy/train/sentence_1.npy",
+          "sentence_2": "../../../data_quora/data_mini/numpy/train/sentence_2.npy",
+          "label": "../../../data_quora/data_mini/numpy/train/label.npy"
         },
         "dev": {
-          "sentence_1": "../data/dev/sentence_1.npy",
-          "sentence_2": "../data/dev/sentence_2.npy",
-          "label": "../data/dev/label.npy"
+          "sentence_1": "../../../data_quora/data_mini/numpy/dev/sentence_1.npy",
+          "sentence_2": "../../../data_quora/data_mini/numpy/dev/sentence_2.npy",
+          "label": "../../../data_quora/data_mini/numpy/dev/label.npy"
         },
         "test": {
-          "sentence_1": "../data/test/sentence_1.npy",
-          "sentence_2": "../data/test/sentence_2.npy",
-          "label": "../data/test/label.npy"
+          "sentence_1": "../../../data_quora/data_mini/numpy/test/sentence_1.npy",
+          "sentence_2": "../../../data_quora/data_mini/numpy/test/sentence_2.npy",
+          "label": "../../../data_quora/data_mini/numpy/test/label.npy"
         }
     },
     "model": {
@@ -25,7 +25,8 @@ config = {
         "num_layers": 2,
         "bidirectional": True,
         "dropout": 0.2,
-        "embeddings": "../data/embeddings.npy",
-        "epoch": 2
+        "embeddings": "../../../data_quora/data_mini/embeddings.npy",
+        "epoch": 30,
+        "attention_size" : 700
     }
 }
