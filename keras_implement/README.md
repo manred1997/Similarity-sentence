@@ -1,17 +1,19 @@
-## This is the BiLSTM + Attention model.
+## This is the BiLSTM + Attention model is implemented by keras framework
 
 - The training platform is Colab.
 
-- The total number of data = 323366
+- The total number of data = 10000
 
-- The number distribution of Train:Dev = 8:2 with dropout and Epoch: 30
+- The number distribution of Train:Dev = 8.5:1.5 with dropout and Epoch: 20
+
+- Hyperparameter is set at config.py
 
 
 ## Result 
 
-- Average eval_accuracy: 0.83
+- Max Average eval_accuracy: 0.835
 
-![alt text](./image/history-graph_new.png)
+![alt text](../image/history-graph_new.png)
 
 
 ## Usage:
@@ -31,6 +33,8 @@ The code is referred from the following link:
 
 Here are the key code for the normal attention from the above link (https://github.com/LuJunru/Sentences_Pair_Similarity_Calculation_Siamese_LSTM).
 
+
+Model 
 ```
 def shared_model(_input):
     # Word embedding
