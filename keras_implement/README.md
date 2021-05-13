@@ -9,13 +9,13 @@
 
 ## Result 
 
-- Average eval_accuracy: 0.78
+- Average eval_accuracy: 0.83
 
 ![alt text](./image/history-graph_new.png)
 
 
 ## Usage:
-#### Training:
+#### Training and Evaluate:
 `python train.py --plot_training`
 
 #### Evaluate:
@@ -60,15 +60,3 @@ def shared_model(_input):
 ```
 #### Download Word2Vec 
 [link](https://drive.google.com/file/d/1pIbATVFsp6R_kj6TjtOPhEvEqZ-OZbm3/view?usp=sharing)
-
-
-#### Model pytorch
-```
-ultis.py
-dataset.py
-model/model_pytorch.py
-#TODO train.py
-```
-
-### Data
-[link](https://drive.google.com/drive/folders/1qh1E1UwN_jDM2G52fB2YCJrSyZ2_HDXE?usp=sharing)
