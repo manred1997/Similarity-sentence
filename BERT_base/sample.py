@@ -28,8 +28,8 @@ def convert_example_feature(index, example, label_list, tokenizer, config):
         _truncate_seq_pair(tokens_text_left, tokens_text_right, config)
     
     else:
-        if len(tokens_text_left) > config["model"]["max_seq_leght"] - 2:
-            tokens_text_left = tokens_text_left[0: (config["model"]["max_seq_leght"] - 2)]
+        if len(tokens_text_left) > config["model"]["max_seq_length"] - 2:
+            tokens_text_left = tokens_text_left[0: (config["model"]["max_seq_length"] - 2)]
     
     # The convention in BERT is:
     # (a) For sequence pairs:
@@ -136,19 +136,19 @@ class Processor(DataProcessor):
         file_path = os.path.join(data_dir, "train.csv")
         data = pd.read_csv(file_path)
         examples = []
-        for index, row in enumerate(data.iterrows()):
+        for index, row in data.iterrows():
             guid = 'train-%d' %index
             
             text_left = convert_to_unicode(row["question1"])
             text_right = convert_to_unicode(row["question2"])
 
-            label = convert_to_unicode(row["is_duplicate"])
+            label = str(convert_to_unicode(str(row["is_duplicate"])))
 
             examples.append(InputExample(guid=guid,
                                         text_left=text_left,
                                         text_right=text_right,
                                         label=label))
-            print(f"the length of train data : {len(examples)}")
+        print(f"the length of train data : {len(examples)}")
         return examples
     
     def get_dev_examples(self, data_dir):
@@ -213,7 +213,7 @@ class Sample:
         }
 
         for index, example in enumerate(self.examples):
-            if index % 1000 == 0:   print("Writing example %d of %d" % (index, len(example)))
+            if index % 1000 == 0:   print("Writing example %d of %d" % (index, len(self.examples)))
 
             feature = convert_example_feature(index, example, self.label_list, self.tokenizer, self.config)
 
