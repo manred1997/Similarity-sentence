@@ -12,6 +12,8 @@ import numpy as np
 import pandas as pd
 import itertools
 
+import json
+
 
 
 def text_to_word_list(text):
@@ -138,3 +140,8 @@ def load_file_npy(file_path):
     import numpy as np
     with open(file_path, "rb") as f:
         return np.load(f)
+
+def load_json(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return data
