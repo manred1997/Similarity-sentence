@@ -27,6 +27,7 @@ config = {
         "dropout": 0.2,
         "embeddings": "../../../data_quora/data_mini/embeddings.npy",
         "epoch": 30,
-        "attention_size" : 700
+        "attention_size" : 700,
+        "pretrained": "model.pth"
     }
 }

@@ -54,7 +54,7 @@ class SentencePair(object):
             result = "Not Similarity"
         
         return {
-            "score": score,
+            "score": float(score),
             "result": result
         }
 
