@@ -21,4 +21,3 @@ class SentenceSimlarity_BertDataset(Dataset):
         label = torch.tensor(self.Y[0][index], dtype=torch.float)
 
         return input_ids, segment_ids, input_mask, label
-
