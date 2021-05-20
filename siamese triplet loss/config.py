@@ -25,9 +25,13 @@ config = {
         "num_layers": 2,
         "bidirectional": True,
         "dropout": 0.2,
-        "embeddings": "../../../data_quora/data_mini/embeddings.npy",
+        "embeddings": "../data/embeddings.npy",
         "epoch": 30,
         "attention_size" : 700,
-        "pretrained": "model.pth"
+        "pretrained": "model.pth",
+        "kernel_size": 3,
+        "stride": 1,
+        "padding": 1,
+        "p_drop": 0.2
     }
 }
