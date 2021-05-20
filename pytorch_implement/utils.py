@@ -60,7 +60,7 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):
     
     for index, row in df.iterrows():
         # 打印处理进度
-        if index != 0 and index % 1000 == 0:
+        if index != 0 and index % 100000 == 0:
             print(str(index) + " sentences embedded.")
 
         for question in ['question1', 'question2']:
@@ -81,7 +81,7 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):
                     q2n.append(vocabs[word])
             df.at[index, question + '_n'] = q2n
 
-    embeddings = 1 * np.random.randn(len(vocabs) + 1, embedding_dim)
+    embeddings = 1 * np.random.randn(len(vocabs) + 2, embedding_dim)
     '''
     词1 [a1, a2, a3, ..., a60]
     词2 [b1, b2, b3, ..., b60]
@@ -93,6 +93,8 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):
         vocab_word = vocabs[index]
         if vocab_word in word2vec:
             embeddings[index] = word2vec[vocab_word]
+    embeddings[-1] = word2vec["UNK"]
+    vocabs["UNK"] = vocabs_cnt + 1
     del word2vec
 
     return df, embeddings, vocabs, vocabs_not_w2v
@@ -103,7 +105,7 @@ def split_and_zero_padding(df, max_seq_length):
     X = {'left': df['question1_n'], 'right': df['question2_n']}
 
     for dataset, side in itertools.product([X], ['left', 'right']):
-        dataset[side] = pad_sequences(dataset[side], padding='pre', truncating='post', maxlen=max_seq_length)
+        dataset[side] = pad_sequences(dataset[side], padding='post', truncating='post', maxlen=max_seq_length)
 
     return dataset
 

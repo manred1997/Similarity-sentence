@@ -6,11 +6,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from config import config
 
-# from util import load_data, load_word2vec, make_w2v_embeddings, split_and_zero_padding
-
-def load_file(path_file):
-    with open(path_file, "rb") as f:
-        return np.load(f)
+from utils import load_file_npy
 
 class SiameseLSTMDataset(Dataset):
     def __init__(self, config, model):
@@ -18,24 +14,24 @@ class SiameseLSTMDataset(Dataset):
         super(SiameseLSTMDataset, self).__init__()
         if model == "train":
 
-            self.X_left = load_file(config["source"]["train"]["sentence_1"])
-            self.X_right = load_file(config["source"]["train"]["sentence_2"])
+            self.X_left = load_file_npy(config["source"]["train"]["sentence_1"])
+            self.X_right = load_file_npy(config["source"]["train"]["sentence_2"])
 
-            self.Y = load_file(config["source"]["train"]["label"])
+            self.Y = load_file_npy(config["source"]["train"]["label"])
 
         elif model == "dev":
 
-            self.X_left = load_file(config["source"]["dev"]["sentence_1"])
-            self.X_right = load_file(config["source"]["dev"]["sentence_2"])
+            self.X_left = load_file_npy(config["source"]["dev"]["sentence_1"])
+            self.X_right = load_file_npy(config["source"]["dev"]["sentence_2"])
 
-            self.Y = load_file(config["source"]["dev"]["label"])
+            self.Y = load_file_npy(config["source"]["dev"]["label"])
         
         else:
 
-            self.X_left = load_file(config["source"]["test"]["sentence_1"])
-            self.X_right = load_file(config["source"]["test"]["sentence_2"])
+            self.X_left = load_file_npy(config["source"]["test"]["sentence_1"])
+            self.X_right = load_file_npy(config["source"]["test"]["sentence_2"])
 
-            self.Y = load_file(config["source"]["test"]["label"])
+            self.Y = load_file_npy(config["source"]["test"]["label"])
 
 
     def __len__(self):

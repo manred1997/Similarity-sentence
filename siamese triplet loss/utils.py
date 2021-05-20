@@ -1,6 +1,3 @@
-import keras
-from keras import backend as K
-from keras.layers import Layer
 from keras.preprocessing.sequence import pad_sequences
 
 from gensim.models import KeyedVectors
@@ -54,26 +51,29 @@ def text_to_word_list(text):
 
 
 def make_w2v_embeddings(word2vec, df, embedding_dim):
-    # word2vec: 3000000 X 300
     vocabs = {}
     vocabs_cnt = 0
 
     vocabs_not_w2v = {}
     vocabs_not_w2v_cnt = 0
 
+    
     for index, row in df.iterrows():
-        if index != 0 and index % 10000 == 0:
+        # 打印处理进度
+        if index != 0 and index % 100000 == 0:
             print(str(index) + " sentences embedded.")
 
         for question in ['question1', 'question2']:
             q2n = []  # q2n -> question to numbers representation
-            words = text_to_word_list(row[question]) # tokens
+            words = text_to_word_list(row[question])
 
             for word in words:
-                if word not in word2vec and word not in vocabs_not_w2v:
+                # if word in stops:  # 去停用词
+                    # continue
+                if word not in word2vec and word not in vocabs_not_w2v:  
                     vocabs_not_w2v_cnt += 1
                     vocabs_not_w2v[word] = vocabs_not_w2v_cnt
-                if word not in vocabs:
+                if word not in vocabs:  
                     vocabs_cnt += 1
                     vocabs[word] = vocabs_cnt
                     q2n.append(vocabs_cnt)
@@ -81,20 +81,20 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):
                     q2n.append(vocabs[word])
             df.at[index, question + '_n'] = q2n
 
-    #Create embedding 
-
-    embeddings = 1 * np.random.randn(len(vocabs) + 1, embedding_dim)
+    embeddings = 1 * np.random.randn(len(vocabs) + 2, embedding_dim)
     '''
     词1 [a1, a2, a3, ..., a60]
     词2 [b1, b2, b3, ..., b60]
     词3 [c1, c2, c3, ..., c60]
     '''
-    embeddings[0] = 0
+    embeddings[0] = 0 
 
     for index in vocabs:
         vocab_word = vocabs[index]
         if vocab_word in word2vec:
             embeddings[index] = word2vec[vocab_word]
+    embeddings[-1] = word2vec["UNK"]
+    vocabs["UNK"] = vocabs_cnt + 1
     del word2vec
 
     return df, embeddings, vocabs, vocabs_not_w2v
@@ -105,7 +105,7 @@ def split_and_zero_padding(df, max_seq_length):
     X = {'left': df['question1_n'], 'right': df['question2_n']}
 
     for dataset, side in itertools.product([X], ['left', 'right']):
-        dataset[side] = pad_sequences(dataset[side], padding='pre', truncating='post', maxlen=max_seq_length)
+        dataset[side] = pad_sequences(dataset[side], padding='post', truncating='post', maxlen=max_seq_length)
 
     return dataset
 
