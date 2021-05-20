@@ -1,6 +1,3 @@
-import keras
-from keras import backend as K
-from keras.layers import Layer
 from keras.preprocessing.sequence import pad_sequences
 
 from gensim.models import KeyedVectors
@@ -53,12 +50,12 @@ def text_to_word_list(text):
     return text
 
 
-def make_w2v_embeddings(word2vec, df, embedding_dim):  # 将词转化为词向量
-    vocabs = {}  # 词序号
-    vocabs_cnt = 0  # 词个数计数器
+def make_w2v_embeddings(word2vec, df, embedding_dim):
+    vocabs = {}
+    vocabs_cnt = 0
 
-    vocabs_not_w2v = {}  # 无法用词向量表示的词
-    vocabs_not_w2v_cnt = 0  # 无法用词向量表示的词个数计数器
+    vocabs_not_w2v = {}
+    vocabs_not_w2v_cnt = 0
 
     
     for index, row in df.iterrows():
@@ -84,29 +81,27 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):  # 将词转化为词向�
                     q2n.append(vocabs[word])
             df.at[index, question + '_n'] = q2n
 
-    embeddings = 1 * np.random.randn(len(vocabs) + 1, embedding_dim)  # 随机初始化一个形状为[全部词个数，词向量维度]的矩阵
+    embeddings = 1 * np.random.randn(len(vocabs) + 1, embedding_dim)
     '''
     词1 [a1, a2, a3, ..., a60]
     词2 [b1, b2, b3, ..., b60]
     词3 [c1, c2, c3, ..., c60]
     '''
-    embeddings[0] = 0  # 第一行用0填充，因为不存在index为0的词
+    embeddings[0] = 0 
 
     for index in vocabs:
         vocab_word = vocabs[index]
         if vocab_word in word2vec:
             embeddings[index] = word2vec[vocab_word]
-    # del word2vec
+    del word2vec
 
-    return df, embeddings, vocabs
+    return df, embeddings, vocabs, vocabs_not_w2v
 
 
-def split_and_zero_padding(df, max_seq_length):  # 调整tokens长度
+def split_and_zero_padding(df, max_seq_length):
 
-    # 训练集矩阵转换成字典
     X = {'left': df['question1_n'], 'right': df['question2_n']}
 
-    # 调整到规定长度
     for dataset, side in itertools.product([X], ['left', 'right']):
         dataset[side] = pad_sequences(dataset[side], padding='pre', truncating='post', maxlen=max_seq_length)
 
@@ -119,17 +114,10 @@ def load_word2vec(file_path):
     return embedding_dict
 
 def load_data(file_path):
-    # df = pd.read_csv(file_path,encoding = 'gb18030')
     df = pd.read_csv(file_path)
     for q in ['question1', 'question2']:
         df[q + '_n'] = df[q]
     return df
-
-def load_model(file_path):
-    model = keras.models.load_model(file_path, custom_objects={"ManDist": ManDist})
-    model.summary()
-
-    return model
 
 def load_file_npy(file_path):
     import numpy as np
