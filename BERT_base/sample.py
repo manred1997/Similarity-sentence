@@ -139,8 +139,8 @@ class Processor(DataProcessor):
         for index, row in data.iterrows():
             guid = 'train-%d' %index
             
-            text_left = convert_to_unicode(row["question1"])
-            text_right = convert_to_unicode(row["question2"])
+            text_left = convert_to_unicode(str(row["question1"]))
+            text_right = convert_to_unicode(str(row["question2"]))
 
             label = str(convert_to_unicode(str(row["is_duplicate"])))
 

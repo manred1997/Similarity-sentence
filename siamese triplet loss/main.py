@@ -6,10 +6,9 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 
 from config import config
-from dataset import SiameseLSTMDataset
-from model_attention import SiameseLSTM
 
-# from sklearn.metrics import accuracy_score
+from dataset import CNN_LSTM_Triplet_Dataset
+from model import CNN_LSTM
 
 
 def train(data_loader, model, optimizer, loss_fn, loss_previous, epoch, device):
@@ -65,17 +64,12 @@ def main(config):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_dataset = SiameseLSTMDataset(config, "train")
+    train_dataset = CNN_LSTM_Triplet_Dataset(config)
     print(len(train_dataset))
     train_sampler = RandomSampler(train_dataset)
     train_loader = DataLoader(train_dataset, batch_size=config["model"]["batch_size"], sampler=train_sampler)
 
-    dev_dataset = SiameseLSTMDataset(config, "test")
-    print(len(dev_dataset))
-    dev_sampler = SequentialSampler(dev_dataset)
-    dev_loader = DataLoader(dev_dataset, batch_size=config["model"]["batch_size"], sampler=dev_sampler)
-
-    model = SiameseLSTM(config).double().to(device=device)
+    model = CNN_LSTM(config).double().to(device=device)
 
     # if True:
     #     model.load_state_dict(torch.load("./best_model_eval/model_acc_83.3276.pth"))
@@ -91,7 +85,7 @@ def main(config):
     ]
 
     optimizer = torch.optim.Adam(lr=1e-2, betas=(0.9, 0.98), eps=1e-9, params=optimizer_grouped_parameters)
-    loss_fn = nn.BCELoss()
+    loss_fn = nn.TripletMarginLoss()
     
     acc_dev_previous = 0
     loss_dev_previous = 1000

@@ -5,7 +5,6 @@ from torch.autograd import Variable
 
 import numpy as np
 
-from config import config
 from utils import load_file_npy
 
 class CNN(nn.Module):
