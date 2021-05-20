@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Author  : Junru_Lu
-# @File    : util.py
 import keras
 from keras import backend as K
 from keras.layers import Layer
@@ -63,9 +60,7 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):  # 将词转化为词向�
     vocabs_not_w2v = {}  # 无法用词向量表示的词
     vocabs_not_w2v_cnt = 0  # 无法用词向量表示的词个数计数器
 
-    # 停用词
-    # stops = set(open('data/stopwords.txt').read().strip().split('\n'))
-
+    
     for index, row in df.iterrows():
         # 打印处理进度
         if index != 0 and index % 1000 == 0:
@@ -78,10 +73,10 @@ def make_w2v_embeddings(word2vec, df, embedding_dim):  # 将词转化为词向�
             for word in words:
                 # if word in stops:  # 去停用词
                     # continue
-                if word not in word2vec and word not in vocabs_not_w2v:  # OOV的词放入不能用词向量表示的字典中，value为1
+                if word not in word2vec and word not in vocabs_not_w2v:  
                     vocabs_not_w2v_cnt += 1
-                    vocabs_not_w2v[word] = 1
-                if word not in vocabs:  # 非OOV词，提取出对应的id
+                    vocabs_not_w2v[word] = vocabs_not_w2v_cnt
+                if word not in vocabs:  
                     vocabs_cnt += 1
                     vocabs[word] = vocabs_cnt
                     q2n.append(vocabs_cnt)

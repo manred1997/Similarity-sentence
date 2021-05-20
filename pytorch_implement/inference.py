@@ -18,8 +18,9 @@ class SentencePair(object):
         self.model.load_state_dict(torch.load(config["model"]["pretrained"], map_location=torch.device('cpu')))
         print("Loaded model")
         self.model = self.model.to(device = self.device)
+        self.model.eval()
         
-        self.embeddings = load_file_npy(config["model"]["embeddings"])
+        # self.embeddings = load_file_npy(config["model"]["embeddings"])
 
         self.vocab = load_json(config["model"]["vocab"])
 
@@ -45,8 +46,9 @@ class SentencePair(object):
 
         sentence_1 = sentence_1.to(device=self.device)
         sentence_2 = sentence_2.to(device=self.device)
-
-        score = self.model(sentence_1, sentence_2)
+        
+        with torch.no_grad():
+            score = self.model(sentence_1, sentence_2)
         
         if score > 0.5:
             result = "Similarity"
